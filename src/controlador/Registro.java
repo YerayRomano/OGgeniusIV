@@ -17,14 +17,14 @@ import modelo.Usuario;
 /**
  * Servlet implementation class Regsitro
  */
-@WebServlet("/Regsitro")
-public class Regsitro extends HttpServlet {
+@WebServlet("/Registro")
+public class Registro extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public Regsitro() {
+	public Registro() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -107,9 +107,21 @@ public class Regsitro extends HttpServlet {
 							int tema = Integer.parseInt(request.getParameter("tema"));
 							Tema temario = new Tema();
 							boolean existe = temario.temaExiste(tema);
+							if(existe == false) {
+								errores.add("error, el tema solicitado no existe");
+							}
 						} catch (NumberFormatException e) {
 							errores.add("error, el codigo de tema debe de ser numerico");
 						}
+					}
+					if(errores.size() == 0) {
+						int tema = Integer.parseInt(request.getParameter("tema"));
+						Usuario usr = new Usuario();
+						usr.updateUsuario((Integer) sesion.getAttribute("cod_usr"),Integer.parseInt(request.getParameter("tema")));
+						response.sendRedirect("/Principal");
+					} else {
+						request.setAttribute("errores", errores);
+						request.getRequestDispatcher("/errores.jsp").forward(request, response);
 					}
 				}
 			break;

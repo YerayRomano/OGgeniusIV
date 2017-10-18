@@ -169,4 +169,18 @@ public class Usuario {
 		return false;
 		
 	}
+	public boolean updateUsuario(int cod_usr,int tema) {
+		String consulta = String.format("UPDATE usuarios SET tema=%d WHERE cod_usr=%d",tema,cod_usr);
+		try {
+			Connection con = this.conexion();
+			Statement stm = con.createStatement();
+			stm.executeUpdate(consulta);
+			//preparedStatement.setString(1,mail);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
