@@ -33,8 +33,8 @@ public class Bienvenida extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession sesion = request.getSession();
-		if(sesion.getAttribute("nombre") != null && sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
-			response.sendRedirect("/principal");
+		if(sesion.getAttribute("nombre") != null && sesion.getAttribute("apellidos") != null && sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
+			response.sendRedirect("/OGgenius/Principal");
 			return ;
 		} else {
 			request.getRequestDispatcher("/login.jsp").forward(request, response);
@@ -46,8 +46,8 @@ public class Bienvenida extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession sesion = request.getSession();
-		if(sesion.getAttribute("nombre") != null && sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
-			response.sendRedirect("/principal");
+		if(sesion.getAttribute("nombre") != null && sesion.getAttribute("apellidos") != null && sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
+			response.sendRedirect("/OGgenius/Principal");
 			return ;
 		} else {
 			ArrayList<String> errores = new ArrayList <String>();
@@ -89,7 +89,9 @@ public class Bienvenida extends HttpServlet {
 						sesion.setAttribute("apellidos", tusdatos.getApellidos());
 						sesion.setAttribute("cod_usr", tusdatos.getCod_usr());
 						sesion.setAttribute("tema", tusdatos.getTema());
-						response.sendRedirect("/principal");
+						sesion.setAttribute("mail",tusdatos.getMail());
+						sesion.setAttribute("rol",tusdatos.getRol());
+						response.sendRedirect("/OGgenius/Principal");
 					}
 				}
 			}

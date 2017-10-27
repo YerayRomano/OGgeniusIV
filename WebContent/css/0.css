@@ -1,0 +1,23 @@
+body {
+	background-image: url('../temas/0.jpg');
+	font-family: arial;
+	text-align: center;
+}
+
+.area51 {
+	background-color: black;
+	color: white;
+	opacity: 0.9;
+	margin-top: 5%;
+	width: 50%;
+}
+.cabecera {
+	background-color: black;
+	color: white;
+	opacity: 0.9;
+	margin-top: 5%;
+	width: 50%;
+}
+.centro {
+	text-align: center;
+}

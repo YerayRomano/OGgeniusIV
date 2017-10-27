@@ -1,16 +1,20 @@
 package controlador;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import javax.servlet.http.Part;
 import modelo.Tema;
 import modelo.Usuario;
 
@@ -18,6 +22,7 @@ import modelo.Usuario;
  * Servlet implementation class Regsitro
  */
 @WebServlet("/Registro")
+@MultipartConfig
 public class Registro extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -36,13 +41,13 @@ public class Registro extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession sesion = request.getSession();
-		if (sesion.getAttribute("nombre") != null && sesion.getAttribute("cod_usr") != null
-				&& sesion.getAttribute("tema") != null) {
+		if (sesion.getAttribute("nombre") != null && sesion.getAttribute("apellidos") != null
+				&& sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
 			int frame = (Integer) sesion.getAttribute("frame");
 			switch (frame) {
 			case 0:
 
-			break;
+				break;
 			case 1:
 				String rutaImagen = "perfiles/default.jpg";
 				String directorio = "C:/Users/alumno_t/eclipse-workspace/OGgenius/WebContent/perfiles/";
@@ -60,7 +65,7 @@ public class Registro extends HttpServlet {
 				ArrayList<Tema> lostemas = tema.getAllTemas();
 				request.setAttribute("temaList", lostemas);
 				request.getRequestDispatcher("/Listatemas.jsp").forward(request, response);
-			break;
+				break;
 			default:
 
 				break;
@@ -78,8 +83,8 @@ public class Registro extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession sesion = request.getSession();
 		ArrayList<String> errores = new ArrayList<String>();
-		if (sesion.getAttribute("nombre") != null && sesion.getAttribute("cod_usr") != null
-				&& sesion.getAttribute("tema") != null) {
+		if (sesion.getAttribute("nombre") != null && sesion.getAttribute("apellidos") != null
+				&& sesion.getAttribute("cod_usr") != null && sesion.getAttribute("tema") != null) {
 			int frame = (Integer) sesion.getAttribute("frame");
 			System.out.println(frame);
 			switch (frame) {
@@ -87,47 +92,79 @@ public class Registro extends HttpServlet {
 
 				break;
 			case 1:
-				if(request.getParameter("cuerdaHuida") != null) {
+				if (request.getParameter("cuerdaHuida") != null) {
 					boolean huida = Boolean.parseBoolean(request.getParameter("cuerdaHuida"));
-					if(huida == true) {
-						sesion.setAttribute("frame",2);
+					if (huida == true) {
+						sesion.setAttribute("frame", 2);
 					}
-					doGet(request, response);
+				} else {
+					Part fotoPart = request.getPart("foto");
+					int fotoSize = (int) fotoPart.getSize();
+					byte[] foto = null;
+					System.out.println(fotoPart.getContentType().split("/")[0]);
+					if (fotoSize > 0 && fotoSize < (2048*1024) && fotoPart.getContentType().split("/") [0].equals("image")) {
+
+						foto = new byte[fotoSize];
+						try (DataInputStream dis = new DataInputStream(fotoPart.getInputStream())) {
+							dis.readFully(foto);
+							// InputStream fileContent = dis;
+							File file = new File("C:\\Users\\alumno_t\\eclipse-workspace\\OGgenius\\WebContent\\perfiles\\", sesion.getAttribute("cod_usr") + ".jpg");
+							FileOutputStream salida = new FileOutputStream(file);
+							sesion.setAttribute("frame",2);
+							salida.write(foto);
+							salida.close();
+						}
+					} else {
+						if(fotoSize > (2048*1024)) {
+							errores.add("error, no se puede subir imagenes superiores a 2 MB");
+						}
+						if(fotoPart.getContentType().split("/") [0] != "image") {
+							errores.add("error, lo que intentas subir no es una imagen");
+						}
+						request.setAttribute("errores", errores);
+						request.getRequestDispatcher("/errores.jsp").forward(request, response);
+					}
 				}
-			break;
+				if (sesion.getAttribute("rko") == null)
+					doGet(request, response);
+				else
+					response.sendRedirect("/OGgenius/NaveNodriza");
+				break;
 			case 2:
-				if(request.getParameter("tema") == null) {
+				if (request.getParameter("tema") == null) {
 					errores.add("error, no se mandado el codigo del tema");
 				}
-				if(errores.size() == 0) {
-					if(request.getParameter("tema") == "") {
+				if (errores.size() == 0) {
+					if (request.getParameter("tema") == "") {
 						errores.add("error, se ha mandado un codigo de tema vacio");
 					} else {
 						try {
 							int tema = Integer.parseInt(request.getParameter("tema"));
 							Tema temario = new Tema();
 							boolean existe = temario.temaExiste(tema);
-							if(existe == false) {
+							if (existe == false) {
 								errores.add("error, el tema solicitado no existe");
 							}
 						} catch (NumberFormatException e) {
 							errores.add("error, el codigo de tema debe de ser numerico");
 						}
 					}
-					if(errores.size() == 0) {
+					if (errores.size() == 0) {
 						int tema = Integer.parseInt(request.getParameter("tema"));
 						Usuario usr = new Usuario();
-						usr.updateUsuario((Integer) sesion.getAttribute("cod_usr"),Integer.parseInt(request.getParameter("tema")));
-						response.sendRedirect("/Principal");
+						usr.updateUsuario((Integer) sesion.getAttribute("cod_usr"),
+								Integer.parseInt(request.getParameter("tema")));
+						sesion.setAttribute("tema", Integer.parseInt(request.getParameter("tema")));
+						response.sendRedirect("/OGgenius/Principal");
 					} else {
 						request.setAttribute("errores", errores);
 						request.getRequestDispatcher("/errores.jsp").forward(request, response);
 					}
 				}
-			break;
+				break;
 			default:
 
-			break;
+				break;
 			}
 		} else {
 			if (request.getParameter("nome") == null) {
@@ -171,6 +208,12 @@ public class Registro extends HttpServlet {
 				} else {
 					if (request.getParameter("mail").split("@").length != 2) {
 						errores.add("Error, formato de correo no valido");
+					} else {
+						Usuario usr = new Usuario();
+						Usuario youngsta = usr.getUserdata(request.getParameter("mail"));
+						if (youngsta != null) {
+							errores.add("Error, el usuario ya existe");
+						}
 					}
 				}
 				if (request.getParameter("pss") == "") {
@@ -205,7 +248,7 @@ public class Registro extends HttpServlet {
 				}
 				if (errores.size() == 0) {
 					Usuario usr = new Usuario(0, request.getParameter("nome"), request.getParameter("apel"),
-							request.getParameter("mail"), request.getParameter("pss"), 1, 0);
+							request.getParameter("mail"), request.getParameter("pss"), 1, 0,"cliente");
 					boolean efectivo = usr.insertarUsuario(usr);
 					if (!efectivo) {
 						errores.add("error interno al insertar el usuario, pruebe mas tarde");
@@ -217,7 +260,9 @@ public class Registro extends HttpServlet {
 						sesion.setAttribute("apellidos", tusdatos.getApellidos());
 						sesion.setAttribute("cod_usr", tusdatos.getCod_usr());
 						sesion.setAttribute("tema", tusdatos.getTema());
+						sesion.setAttribute("mail", tusdatos.getMail());
 						sesion.setAttribute("frame", 1);
+						sesion.setAttribute("rol","cliente");
 						doGet(request, response);
 					}
 				} else {

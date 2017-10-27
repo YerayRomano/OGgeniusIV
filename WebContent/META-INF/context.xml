@@ -1,4 +1,4 @@
-<Context> 
+<Context allowCasualMultipartParsing="true"> 
 
 <Resource name="jdbc/mydbdb"
     auth="Container"
@@ -16,5 +16,4 @@
     useUnicode="true" useEncoding="true" characterEncoding="UTF-8"      
     url="jdbc:mysql://localhost:3306/mydb?useOldAliasMetadataBehavior=true&amp;zeroDateTimeBehavior=convertToNull"
 />
-
 </Context>
