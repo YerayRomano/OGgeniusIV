@@ -16,9 +16,9 @@
     <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
 	<link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
 	<script>
-	function migo(cod_comen) {
+	function migo(aof) {
 		$.ajax({
-			url : '/OGgenius/GestionUsuarios?del='+cod_comen,
+			url : '/OGgenius/GestionArtistas?del='+aof,
 			type : 'get',
 			dataType : 'html', //expect return data as html from server
 			data : '',
@@ -177,55 +177,53 @@
 				<div class="content-wrapper">
 		<section class="content-header">
 			<div id="lista">
-	<table id="users">
-		<tr>
-			<th>cod_usr</th>
-			<th>nombre</th>
-			<th>Apellidos</th>
-			<th>mail</th>
-			<th>Contrase&ntilde;a</th>
-			<th>Activo</th>
-			<th>tema</th>
-			<th>modificar</th>
-			<th>borrar</th>
-		</tr>
-		<%
-			Object users = request.getAttribute("usuarios"); 
-			ArrayList <Usuario> usuarios = (ArrayList<Usuario>) users;
-			Object oretomba = request.getAttribute("errores");
-			ArrayList<String> errores = (ArrayList<String>) oretomba;
-			if (errores != null) {
-				if (errores.size() != 0) {
-		%>
-		<h2>Lista de errores</h2>
-		<%
-			for (int i = 0; i < errores.size(); i++) {
-		%>
-		<p><%=errores.get(i)%></p>
-		<%
-			}
-				}
-			}
-			for(int i=0;i<usuarios.size();i++) {
-		%>
-		<tr>
-			<td><%= usuarios.get(i).getCod_usr() %></td>
-			<td><%= usuarios.get(i).getNombre() %></td>
-			<td><%= usuarios.get(i).getApellidos() %></td>
-			<td><%= usuarios.get(i).getMail() %></td>
-			<td><%= usuarios.get(i).getActivo() %></td>
-			<td><%= usuarios.get(i).getTema() %></td>
-			<td><form action="" method="get"><input type="hidden" name="frame" value="2"><input type="hidden" name="id" value="<%= usuarios.get(i).getCod_usr() %>"/><input type="submit" value="modifcar"/></form></td>
-			<td><input type="image" src="recursos/aspa.jpg" alt="borrar" onclick="migo(<%= usuarios.get(i).getCod_usr() %>)"/></td>
-		</tr>
-		<%
-			}
-		%>
-	</table>
-					<center>
-						<input type="image" src="recursos/anadir.jpg" onclick="window.open('/OGgenius/GestionUsuarios?frame=1','_self')"/>
-					</center>
-				</div>
+				<h2>Gestion de artitas</h2>
+				<%
+					Object losArtistas = request.getAttribute("artistas");
+					HashMap<Integer,Artista> artistas = (HashMap<Integer,Artista>) losArtistas;
+					if(artistas == null) {
+				%>
+				No hay modafocas que administrar
+				<%
+					} else {
+						java.util.Set<Integer> keys = artistas.keySet();
+				%>
+				<table>
+					<tr>
+						<th>foto</th>
+						<th>nombre</th>
+						<th>ano</th>
+						<th>vetado</th>
+						<th>modificar</th>
+						<th>borrar</th>
+					</tr>
+				<%
+						for(Integer key:keys) {
+				%>
+					<tr>
+						<th>
+							<%
+							rutaImagen = "perfiles/default.jpg";
+							directorio = "C:/Users/alumno_t/eclipse-workspace/OGgenius/WebContent/modafocas/";
+							tieneImagen = new File(directorio + artistas.get(key).getCod_modafoca() + ".jpg");
+							if (tieneImagen.exists()) {
+								rutaImagen = "modafocas/" + artistas.get(key).getCod_modafoca() + ".jpg";
+							}
+							%>
+							<img src="<%= rutaImagen %>" alt="<%= artistas.get(key).getNombre()  %>" width="128" heigth="128"/>
+						</th>
+						<td>&nbsp;<%= artistas.get(key).getNombre() %></th>
+						<td>&nbsp;<%= artistas.get(key).getAno() %></th>
+						<td>&nbsp;<%= artistas.get(key).getVetado() %></th>
+						<td><form action="" method="get"><input type="hidden" name="frame" value="2"><input type="hidden" name="id" value="<%= artistas.get(key).getCod_modafoca() %>"/><input type="submit" value="modifcar"/></form></td>
+						<td><input type="image" src="recursos/aspa.jpg" alt="borrar" onclick="migo(<%= artistas.get(key).getCod_modafoca() %>)"/></td>
+					</tr>
+				<%
+						}
+					}
+				%>
+				</table>
+			</div>
 		</section>
 	</div>
 	<div class="control-sidebar-bg"></div>
@@ -239,7 +237,7 @@
     <script src="dist/js/demo.js"></script>
 			>
 <script>
-	$("#users").DataTable();
+	$("#example1").DataTable();
 </script>
 		</div>
 	

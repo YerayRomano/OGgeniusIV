@@ -15,6 +15,7 @@ public class Album {
 	String nombre;
 	int ano;
 	int vetado;
+
 	public Album(int cod_album, String nombre, int ano, int vetado) {
 		super();
 		this.cod_album = cod_album;
@@ -22,33 +23,43 @@ public class Album {
 		this.ano = ano;
 		this.vetado = vetado;
 	}
+
 	public Album() {
-		
+
 	}
+
 	public int getCod_album() {
 		return cod_album;
 	}
+
 	public void setCod_album(int cod_album) {
 		this.cod_album = cod_album;
 	}
+
 	public String getNombre() {
 		return nombre;
 	}
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
+
 	public int getAno() {
 		return ano;
 	}
+
 	public void setAno(int ano) {
 		this.ano = ano;
 	}
+
 	public int getVetado() {
 		return vetado;
 	}
+
 	public void setVetado(int vetado) {
 		this.vetado = vetado;
 	}
+
 	private Connection conexion() {
 
 		String USUARIO = "root";
@@ -68,8 +79,9 @@ public class Album {
 			return null;
 		}
 	}
-	public HashMap<Integer,Album> getAllAlbunes() {
-		HashMap<Integer,Album> albunes = new HashMap<Integer,Album>();
+
+	public HashMap<Integer, Album> getAllAlbunes() {
+		HashMap<Integer, Album> albunes = new HashMap<Integer, Album>();
 		Statement stmt = null;
 		String consulta = "SELECT * FROM albunes WHERE vetado=0";
 		try {
@@ -77,7 +89,7 @@ public class Album {
 			stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(consulta);
 			while (rs.next()) {
-				albunes.put(rs.getInt(1),new Album(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4)));
+				albunes.put(rs.getInt(1), new Album(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4)));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -86,14 +98,15 @@ public class Album {
 		}
 		return albunes;
 	}
+
 	public Album getAlbum(int album) {
-		String consulta = "SELECT * FROM albunes WHERE cod_album='"+album+"'";
+		String consulta = "SELECT * FROM albunes WHERE cod_album='" + album + "'";
 		try {
 			Connection con = this.conexion();
 			PreparedStatement preparedStatement = con.prepareStatement(consulta);
-			//preparedStatement.setString(1,mail);
+			// preparedStatement.setString(1,mail);
 			ResultSet rs = preparedStatement.executeQuery(consulta);
-			if(rs.next() == false) {
+			if (rs.next() == false) {
 				return null;
 			}
 			Album albuma = new Album(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getInt(4));
@@ -103,5 +116,21 @@ public class Album {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean borrarAlbum(int cod_album) {
+		Statement stmt = null;
+		String consulta = "DELETE FROM albunes WHERE cod_album=" + cod_album + "; ";
+		try {
+			Connection con = this.conexion();
+			Statement stm = con.createStatement();
+			stm.executeUpdate(consulta);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		return false;
 	}
 }

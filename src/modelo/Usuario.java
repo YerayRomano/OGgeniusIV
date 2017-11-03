@@ -244,8 +244,38 @@ public class Usuario {
 		}
 		return false;
 	}
+	public boolean actualizaUsuarioNoPassword(String nombre,String apellidos,int cod_usr,int tema,int habilitado) {
+		String consulta = String.format("UPDATE usuarios SET nombre='%s',apelldios='%s',tema=%d,activo=%d WHERE cod_usr=%d",nombre,apellidos,tema,habilitado,cod_usr);
+		System.out.println(consulta);
+		try {
+			Connection con = this.conexion();
+			Statement stm = con.createStatement();
+			stm.executeUpdate(consulta);
+			//preparedStatement.setString(1,mail);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public boolean actualizaUsuario(String nombre,String apellidos,String pss,int cod_usr) {
 		String consulta = String.format("UPDATE usuarios SET nombre='%s',apelldios='%s',pss=md5('%s') WHERE cod_usr=%d",nombre,apellidos,pss,cod_usr);
+		try {
+			Connection con = this.conexion();
+			Statement stm = con.createStatement();
+			stm.executeUpdate(consulta);
+			//preparedStatement.setString(1,mail);
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean actualizaUsuario(String nombre,String apellidos,String pss,int cod_usr,int tema,int habilitado) {
+		String consulta = String.format("UPDATE usuarios SET nombre='%s',apelldios='%s',pss=md5('%s'),tema='%d',activo=%d WHERE cod_usr=%d",nombre,apellidos,pss,cod_usr,tema,habilitado);
+		System.out.println(consulta);
 		try {
 			Connection con = this.conexion();
 			Statement stm = con.createStatement();

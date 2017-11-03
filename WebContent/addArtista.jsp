@@ -21,9 +21,9 @@
 <link rel="stylesheet"
 	href="../../plugins/datatables/dataTables.bootstrap.css">
 <script>
-	function migo(cod_comen) {
+	function migo(aof) {
 		$.ajax({
-			url : '/OGgenius/GestionUsuarios?del=' + cod_comen,
+			url : '/OGgenius/GestionArtistas?del=' + aof,
 			type : 'get',
 			dataType : 'html', //expect return data as html from server
 			data : '',
@@ -176,40 +176,31 @@
 		</aside>
 		<div class="content-wrapper">
 			<section class="content-header">
-				<form action="" method="post">
-					<h2>Registro de usuario</h2>
-					<input type="hidden" name="frame" value="1"/>
-					Nombre:<input type="text" name="nome">&nbsp;apellidos:<input
-						type="text" name="apel"><br /> Correo:<input type="text"
-						name="mail" />&nbsp;Contrase&ntilde;a:<input type="password"
-						name="pss" /><br/>Repitela:<input type="password" name="pss0" />
-						Habilitado:<select name="habilitado">
-							<option value="0">No</option>
-							<option value="1">S&iacute;</option>
-						</select>
-						<%
-							Object lostemas = request.getAttribute("temas");
-							ArrayList<Tema> temas = (ArrayList<Tema>) lostemas;
-							if(temas != null) {
-								if(temas.size() != 0) {
-						%>
-						Tema:<select name="tema">
-						<%
-							for(int i=0;i<temas.size();i++) {
-						%>
-							<option value="<%= temas.get(i).getCodTema() %>"><%= temas.get(i).getNombre() %></option>
-						<%
-							}
-						%>
-						</select>
-						<%
-								}
-							}
-						%>
-						<br/>	
-						<input type="submit" value="Registrate" /><br />
-				</form>
-
+				<div id="lista">
+					<form action="" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="frame" value="1"/>
+						<table>
+							<tr>
+								<td>
+									<h2>Nuevo artista</h2>
+									Nombre:<input type="text" name="nome" /><br />
+									A&ntilde;o:<input type="number" name="ano" min="1950" max="2000"
+									defualt="1992" /><br /> vetado:<select name="veto">
+										<option value="1">Si</option>
+										<option value="0">No</option>
+								</select><br /> Descripcion:<br /> <textarea rows="" cols=""
+										name="descripta"></textarea>
+								</td>
+								<td style="margin-bottom: 5%">
+									<h2>Imagen del modafoca</h2>
+									<img src="perfiles/default.jpg" alt="el modafoca"/>
+									<input type="file" name="imagen"/><br/>
+									<input type="submit" value="crear artista"/>
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
 			</section>
 		</div>
 		<div class="control-sidebar-bg"></div>
@@ -223,7 +214,7 @@
 		<script src="dist/js/demo.js"></script>
 		>
 		<script>
-			$("#users").DataTable();
+			$("#example1").DataTable();
 		</script>
 	</div>
 

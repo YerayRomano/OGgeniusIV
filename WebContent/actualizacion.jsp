@@ -176,14 +176,18 @@
 		</aside>
 		<div class="content-wrapper">
 			<section class="content-header">
+				<%
+					Object aflijido = request.getAttribute("losdatos");
+					Usuario losdatos = (Usuario) aflijido;
+				%>
 				<form action="" method="post">
 					<h2>Registro de usuario</h2>
 					<input type="hidden" name="frame" value="1"/>
-					Nombre:<input type="text" name="nome">&nbsp;apellidos:<input
-						type="text" name="apel"><br /> Correo:<input type="text"
-						name="mail" />&nbsp;Contrase&ntilde;a:<input type="password"
+					Nombre:<input type="text" name="nome" value="<%= losdatos.getNombre() %>">&nbsp;apellidos:<input
+						type="text" name="apel" value="<%= losdatos.getApellidos() %>"><br /> Correo:<input type="text"
+						name="mail" value="<%= losdatos.getMail() %>"/>&nbsp;Contrase&ntilde;a:<input type="password"
 						name="pss" /><br/>Repitela:<input type="password" name="pss0" />
-						Habilitado:<select name="habilitado">
+						Habilitado:<select name="habilitado" selected="">
 							<option value="0">No</option>
 							<option value="1">S&iacute;</option>
 						</select>
