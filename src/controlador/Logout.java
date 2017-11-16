@@ -30,7 +30,7 @@ public class Logout extends HttpServlet {
 		// TODO Auto-generated method stub
 		HttpSession sesion = request.getSession();
 		sesion.invalidate();
-		response.sendRedirect("/OGgenius/Bienvenida");
+		response.sendRedirect("/OGgenius/Beinvenida");
 	}
 
 	/**
